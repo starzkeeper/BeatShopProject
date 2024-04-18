@@ -28,12 +28,14 @@ class UserDocument(Document):
 
 @registry.register_document
 class BeatDocument(Document):
+    # name = fields.TextField()
     author = fields.ObjectField(properties={
         'id': fields.IntegerField(),
         'first_name': fields.TextField(),
         'last_name': fields.TextField(),
         'username': fields.TextField(),
     })
+    # description = fields.TextField(index=False)
 
     class Index:
         name = 'beats'

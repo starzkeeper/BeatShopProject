@@ -35,7 +35,7 @@ class Beat(models.Model):
         upload_to='covers/', validators=[FileExtensionValidator(allowed_extensions=['jpg']), validate_cover],
         verbose_name='cover', default=None, null=True, blank=True)
 
-    description = models.TextField(default=None, blank=True, null=True, verbose_name='Описание')
+    description = models.TextField(default=None, blank=True, max_length=256, null=True, verbose_name='Описание')
     bpm = models.PositiveSmallIntegerField(default=0, verbose_name='BPM')
     key = models.CharField(choices=KEY_CHOICES, max_length=50, verbose_name='Тональность')
     tags = models.CharField(default=None, max_length=100, blank=True, null=True, verbose_name='Хэштеги')
