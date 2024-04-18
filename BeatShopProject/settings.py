@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'django_elasticsearch_dsl',
+    'django_elasticsearch_dsl_drf',
 
     # apps
     'accounts',
