@@ -3,5 +3,5 @@ from .views import BeatListCreateAPIView, BeatSearchAPIView
 
 urlpatterns = [
     path("", BeatListCreateAPIView.as_view(), name='beat-list-create'),
-    path('search/<str:query>', BeatSearchAPIView.as_view(), name='beat-search'),
+    path('search/', BeatSearchAPIView.as_view(), name='beat-search'),
 ]

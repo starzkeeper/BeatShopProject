@@ -14,7 +14,7 @@ class BeatSerializer(serializers.ModelSerializer):
             'author',
             'description',
             'bpm', 'key', 'tags',
-            'slug', 'active',
+            'slug', 'active','genre',
             'uploaded',
             'price'
         )

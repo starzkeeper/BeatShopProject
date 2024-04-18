@@ -6,4 +6,4 @@ from .models import Beat
 
 @admin.register(Beat)
 class BeatAdmin(admin.ModelAdmin):
-    fields = ['name', 'author', ('file', 'cover'), 'description', ('bpm', 'key', 'tags'), 'price']
+    fields = ['name', 'author', ('file', 'cover'), 'description', ('bpm', 'key', 'tags', 'genre'), 'price']

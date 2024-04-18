@@ -7,11 +7,12 @@ from django.db.models import QuerySet
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
-from .validators import validate_cover
+from beats.validators import validate_cover
+from .CHOICES_FOR_BEAT import GENRE_CHOICES, KEY_CHOICES
 import os
 
 
-class BeatQuerySet(models.QuerySet):
+class BeatQuerySet(models.QuerySet):  # No need
     def active_beats(self):
         return self.filter(active=True)
 
@@ -36,17 +37,21 @@ class Beat(models.Model):
 
     description = models.TextField(default=None, blank=True, null=True, verbose_name='Описание')
     bpm = models.PositiveSmallIntegerField(default=0, verbose_name='BPM')
-    key = models.CharField(default=None, max_length=6, verbose_name='Тональность')
+    key = models.CharField(choices=KEY_CHOICES, max_length=50, verbose_name='Тональность')
     tags = models.CharField(default=None, max_length=100, blank=True, null=True, verbose_name='Хэштеги')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL")
     likes = models.ManyToManyField(get_user_model(), related_name='blog_posts', blank=True, verbose_name='Лайки')
     active = models.BooleanField(default=True, verbose_name='Инструментал на продаже')
     uploaded = models.DateTimeField(auto_now_add=True)
+    genre = models.CharField(max_length=50, choices=GENRE_CHOICES, verbose_name='Жанр')
 
     price = models.PositiveIntegerField(default=0, verbose_name='Цена')
 
     objects = models.Manager()
     active_beats = BeatManager()
+
+    class Meta:
+        ordering = ('name', )
 
     def save(self, *args, **kwargs):
         if self.tags:

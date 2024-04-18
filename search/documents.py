@@ -49,7 +49,7 @@ class BeatDocument(Document):
             'name',
             'description',
             'bpm', 'key', 'tags',
-            'slug', 'active',
+            'slug', 'active', 'genre',
             'uploaded',
             'price'
         ]
