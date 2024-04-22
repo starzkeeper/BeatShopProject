@@ -1,7 +1,7 @@
 # BeatShop
 The BeatShop project is a platform for selling music beats. Created to demonstrate backend development skills and work with databases and related Django technologies.
 
-## Еechnologies
+## Technologies
 - Django
 - Postgres
 - Elasticsearch
