@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from .models import Beat
 from accounts.serializers import UserSerializer
+from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 
-class BeatSerializer(serializers.ModelSerializer):
+class BeatSerializer(TaggitSerializer, serializers.ModelSerializer):
     author = UserSerializer()
+    tags = TagListSerializerField()
 
     class Meta:
         model = Beat
@@ -14,7 +16,7 @@ class BeatSerializer(serializers.ModelSerializer):
             'author',
             'description',
             'bpm', 'key', 'tags',
-            'slug', 'active','genre',
+            'slug', 'active', 'genre',
             'uploaded',
             'price'
         )

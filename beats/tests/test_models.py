@@ -10,8 +10,8 @@ class BeatModelTestCase(TestCase):
         self.user2 = get_user_model().objects.create(username='test_user_2', email='testemail2@gmail.com')
         self.beat = Beat.objects.create(name='test1 test_', author=self.user,
                                         file='beats/tests/test_files/audio/test_audio.mp3',
-                                        cover='beats/tests/test_files/img/test_img.jpg',
-                                        bpm=120, key='Ab', tags='#tag1#tag2 #tag3 ##tag4', price=1200)
+                                        cover='beats/tests/test_files/img/test_img.jpg', bpm=120, key='Ab',
+                                        genre='SynthPop', tags=['hashtag', 'hashtag2'], price=1200)
         self.beat.likes.set([self.user, self.user2])
 
     def test_beat_model_id_files(self):
@@ -43,6 +43,12 @@ class BeatModelTestCase(TestCase):
         users = [self.user2, self.user]
         return self.assertCountEqual(liked, users)
 
+    def test_beat_model_tags(self):
+        tags = ['hashtag', 'hashtag2']
+        return self.assertEqual(tags, self.beat.tags)
 
+    def test_beat_model_genre(self):
+        return self.assertTrue(self.beat.genre)
 
-
+    def test_beat_model_key(self):
+        return self.assertTrue(self.beat.key)

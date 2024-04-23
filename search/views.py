@@ -1,41 +1,33 @@
-import abc
-from typing import Any, Dict
+from django_elasticsearch_dsl_drf.constants import LOOKUP_FILTER_RANGE, LOOKUP_FILTER_TERMS, LOOKUP_FILTER_TERM
+from django_elasticsearch_dsl_drf.filter_backends import CompoundSearchFilterBackend, FilteringFilterBackend
+from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
+from elasticsearch_dsl import Q
 
-from django.http import HttpResponse
-from elasticsearch_dsl.query import Bool
-from elasticsearch_dsl.response import Response
-from elasticsearch_dsl.search import Search
-from rest_framework import status
-from rest_framework.response import Response as DRFResponse
-from rest_framework.pagination import LimitOffsetPagination
-
-from rest_framework.views import APIView
-from .serializers import SearchQuerySerializer
+from .documents import BeatDocument
+from .serializers import BeatDocumentSerializer
 
 
-class ElasticSearchAPIView(APIView, LimitOffsetPagination):
-    serializer_class = None
-    document_class = None
-    query_serializer_class = SearchQuerySerializer
+class BeatDocumentView(DocumentViewSet):
+    document = BeatDocument
+    serializer_class = BeatDocumentSerializer
 
-    @abc.abstractmethod
-    def generate_q_expression(self, query):
-        """This method should be overridden
-        and return a Q() expression."""
+    filter_backends = [
+        CompoundSearchFilterBackend,
+        FilteringFilterBackend
+    ]
 
-    def get(self, request):
-        search_query = self.query_serializer_class(data=request.GET.dict())
-        if not search_query.is_valid():
-            return DRFResponse(f"Validation error: {search_query.errors}", status=status.HTTP_400_BAD_REQUEST)
-        query_data = search_query.data
-        try:
-            q = self.generate_q_expression(query_data['query'])
-            search = self.document_class.search().query(q)  # Cделать search().filter()
-            response = search.execute()
+    search_fields = {
+        'name': {'fuzziness': 'AUTO'},
+    }
+    filter_fields = {
+        'author': 'username.raw',
+        'bpm': 'bpm.raw',
+        'key': 'key.raw',
+        'genre': 'genre.raw',
+        'tags': 'tags.raw',
+        'active': 'active.raw',
+        'uploaded': 'uploaded.raw',
+        'price': 'price.raw'
+    }
 
-            print(f'Found {response.hits.total.value} hit(s) for query')
-            results = self.paginate_queryset(response, request, view=self)
-            serializer = self.serializer_class(results, many=True)
-            return self.get_paginated_response(serializer.data)
-        except Exception as e:
-            return HttpResponse(e, status=500)
+

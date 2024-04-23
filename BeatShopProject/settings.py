@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_elasticsearch_dsl',
     'django_elasticsearch_dsl_drf',
+    'taggit',
 
     # apps
     'accounts',

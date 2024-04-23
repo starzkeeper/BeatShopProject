@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import FileExtensionValidator
 from django.db import models
 import re
+from taggit.managers import TaggableManager
 
 from django.db.models import QuerySet
 from django.db.models.signals import post_delete, pre_save
@@ -38,7 +39,7 @@ class Beat(models.Model):
     description = models.TextField(default=None, blank=True, max_length=256, null=True, verbose_name='Описание')
     bpm = models.PositiveSmallIntegerField(default=0, verbose_name='BPM')
     key = models.CharField(choices=KEY_CHOICES, max_length=50, verbose_name='Тональность')
-    tags = models.CharField(default=None, max_length=100, blank=True, null=True, verbose_name='Хэштеги')
+    tags = TaggableManager(blank=True, verbose_name='Хэштеги')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL")
     likes = models.ManyToManyField(get_user_model(), related_name='blog_posts', blank=True, verbose_name='Лайки')
     active = models.BooleanField(default=True, verbose_name='Инструментал на продаже')
@@ -54,14 +55,22 @@ class Beat(models.Model):
         ordering = ('name', )
 
     def save(self, *args, **kwargs):
-        if self.tags:
-            tags_list = [f'#{tag.strip()}' for tag in self.tags.split('#') if re.match(r'^[a-zA-Z0-9]+$', tag.strip())]
-            self.tags = ' '.join(tags_list)
+        # if self.tags:
+        #     tags_list = [f'#{tag.strip()}' for tag in self.tags.split('#') if re.match(r'^[a-zA-Z0-9]+$', tag.strip())]
+        #     self.tags = ' '.join(tags_list)
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.name} by {self.author}'
+
+    @property
+    def tags_indexing(self):
+        """Tags for indexing.
+
+        Used in Elasticsearch indexing.
+        """
+        return [tag.name for tag in self.tags.all()]
 
 
 # Сигналы
